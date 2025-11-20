@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 
 // --- Configuración Inicial ---
 const app = express();
-const PORT = process.env.PORT || 5001; 
+const PORT = process.env.PORT || 5001;
 const JWT_SECRET = process.env.JWT_SECRET || "secret_temporal_dev";
 
 // --- Middlewares ---
@@ -22,7 +22,7 @@ app.use(express.json());
 
 // ⚠️ MAGIA AQUÍ: Servir la carpeta 'public' (tu React compilado)
 // Express buscará en la carpeta 'public' que está al nivel de 'src'
-app.use(express.static(path.join(__dirname, "../../public"))); 
+app.use(express.static(path.join(__dirname, "../public"))); // <--- CORREGIDO
 
 // --- RUTAS DE API ---
 
@@ -30,7 +30,9 @@ app.post("/api/auth/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Todos los campos son requeridos" });
+      return res
+        .status(400)
+        .json({ message: "Todos los campos son requeridos" });
     }
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -51,7 +53,9 @@ app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(400).json({ message: "Email y contraseña son requeridos" });
+      return res
+        .status(400)
+        .json({ message: "Email y contraseña son requeridos" });
     }
     const user = await User.findOne({ email });
     if (!user) {
@@ -78,7 +82,7 @@ app.post("/api/auth/login", async (req, res) => {
 // --- REDIRECCIÓN AL FRONTEND (Para que React Router funcione) ---
 // Si la ruta no es /api, enviamos el index.html de React
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../public", "index.html"));
+  res.sendFile(path.join(__dirname, "../public", "index.html")); // <--- CORREGIDO
 });
 
 // --- INICIO DEL SERVIDOR ---
