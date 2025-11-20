@@ -16,13 +16,10 @@ const LoginPage: React.FC<ViewProps> = ({ setView }) => {
     setError(null);
 
     try {
-      const response = await axios.post(
-        "http://localhost:5001/api/auth/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post("/api/auth/login", {
+        email,
+        password,
+      });
 
       // 5. Guarda el token y el nombre
       const { token, userName, message } = response.data;

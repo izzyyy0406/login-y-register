@@ -2,7 +2,7 @@ import React, { useState, FormEvent } from "react";
 import { ViewProps } from "../../types";
 import { LogoIcon, CloseIcon, EyeIcon, EyeSlashIcon } from "./icons";
 // ⚠️ Nota: Debes instalar Axios si aún no lo has hecho: npm install axios
-import axios from "axios"; 
+import axios from "axios";
 
 // Componente para la página de Registro
 const RegisterPage: React.FC<ViewProps> = ({ setView }) => {
@@ -30,39 +30,43 @@ const RegisterPage: React.FC<ViewProps> = ({ setView }) => {
     if (password !== confirmPassword) {
       return setError("Las contraseñas no coinciden.");
     }
-    
+
     // b) Validar coincidencia de Correo
     if (email !== confirmEmail) {
       return setError("Los correos electrónicos no coinciden.");
     }
-    
+
     // c) Validar campos llenos (aunque ya tienen 'required', es una buena práctica aquí)
     if (!firstName || !lastName || !email || !password) {
-        return setError("Por favor, complete todos los campos.");
+      return setError("Por favor, complete todos los campos.");
     }
 
     // --- 2. LLAMADA AL BACKEND ---
     try {
       // Nota: El backend solo usa 'name' (nombre completo), así que los combinamos.
-      const fullName = `${firstName} ${lastName}`; 
-      
-      const response = await axios.post("http://localhost:5001/api/auth/register", {
-        name: fullName, 
-        email: email,
-        password: password,
-      });
+      const fullName = `${firstName} ${lastName}`;
+
+      const response = await axios.post("/api/auth/register", {
+          name: fullName,
+          email: email,
+          password: password,
+        }
+      );
 
       setSuccess(response.data.message || "¡Registro exitoso!");
-      
-      // Esperar 2 segundos y cambiar a la vista de login
-      setTimeout(() => setView("login"), 2000); 
 
+      // Esperar 2 segundos y cambiar a la vista de login
+      setTimeout(() => setView("login"), 2000);
     } catch (err) {
       // Manejo de errores de Axios (ej: email ya registrado, error de servidor)
       if (axios.isAxiosError(err) && err.response) {
-        setError(err.response.data.message || "Error al registrar. Inténtelo de nuevo.");
+        setError(
+          err.response.data.message || "Error al registrar. Inténtelo de nuevo."
+        );
       } else {
-        setError("Error de red. Asegúrese de que el servidor esté funcionando.");
+        setError(
+          "Error de red. Asegúrese de que el servidor esté funcionando."
+        );
       }
     }
   };
@@ -70,7 +74,6 @@ const RegisterPage: React.FC<ViewProps> = ({ setView }) => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl p-8 animate-fadeIn">
-        
         <button
           onClick={() => setView("landing")}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
@@ -88,52 +91,66 @@ const RegisterPage: React.FC<ViewProps> = ({ setView }) => {
             Únete a nuestra comunidad y empieza a aprender hoy.
           </p>
         </div>
-        
+
         {/* --- MENSAJES DE ESTADO --- */}
         {error && (
-            <div className="mb-4 p-3 rounded-lg text-sm text-red-700 bg-red-100 border border-red-300">
-                {error}
-            </div>
+          <div className="mb-4 p-3 rounded-lg text-sm text-red-700 bg-red-100 border border-red-300">
+            {error}
+          </div>
         )}
         {success && (
-            <div className="mb-4 p-3 rounded-lg text-sm text-green-700 bg-green-100 border border-green-300">
-                {success}
-            </div>
+          <div className="mb-4 p-3 rounded-lg text-sm text-green-700 bg-green-100 border border-green-300">
+            {success}
+          </div>
         )}
 
         {/* --- FORMULARIO DE REGISTRO --- */}
         <form onSubmit={handleRegister}>
           <div className="space-y-6">
-            
             {/* Campos de Nombre y Apellido */}
             <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">Nombre</label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm"
-                    placeholder="Tu nombre"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Apellido</label>
-                  <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm"
-                    placeholder="Tu apellido"
-                  />
-                </div>
+              <div>
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Nombre
+                </label>
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm"
+                  placeholder="Tu nombre"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Apellido
+                </label>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  required
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm"
+                  placeholder="Tu apellido"
+                />
+              </div>
             </div>
 
             {/* Campo de Correo Electrónico */}
             <div>
-              <label htmlFor="email-register" className="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+              <label
+                htmlFor="email-register"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Correo Electrónico
+              </label>
               <input
                 type="email"
                 id="email-register"
@@ -144,10 +161,15 @@ const RegisterPage: React.FC<ViewProps> = ({ setView }) => {
                 placeholder="ejemplo@correo.com"
               />
             </div>
-            
+
             {/* Campo de Confirmación de Correo Electrónico */}
             <div>
-              <label htmlFor="confirm-email" className="block text-sm font-medium text-gray-700">Confirmar Correo</label>
+              <label
+                htmlFor="confirm-email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Confirmar Correo
+              </label>
               <input
                 type="email"
                 id="confirm-email"
@@ -161,48 +183,63 @@ const RegisterPage: React.FC<ViewProps> = ({ setView }) => {
 
             {/* Campo de Contraseña */}
             <div>
-              <label htmlFor="password-register" className="block text-sm font-medium text-gray-700">Contraseña</label>
+              <label
+                htmlFor="password-register"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Contraseña
+              </label>
               <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"} // Controlado por el estado
-                    id="password-register"
-                    name="password"
-                    autoComplete="new-password"
-                    required
-                    className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm"
-                    placeholder="Crea una contraseña segura"
-                  />
-                  <button 
-                      type="button" 
-                      onClick={() => setShowPassword(!showPassword)} 
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                      aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                  >
-                      {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-                  </button>
+                <input
+                  type={showPassword ? "text" : "password"} // Controlado por el estado
+                  id="password-register"
+                  name="password"
+                  autoComplete="new-password"
+                  required
+                  className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm"
+                  placeholder="Crea una contraseña segura"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  aria-label={
+                    showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+                  }
+                >
+                  {showPassword ? (
+                    <EyeSlashIcon className="h-5 w-5" />
+                  ) : (
+                    <EyeIcon className="h-5 w-5" />
+                  )}
+                </button>
               </div>
             </div>
-            
+
             {/* Campo de Confirmación de Contraseña */}
             <div>
-              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">Confirmar Contraseña</label>
+              <label
+                htmlFor="confirm-password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Confirmar Contraseña
+              </label>
               <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"} // Controlado por el estado
-                    id="confirm-password"
-                    name="confirmPassword"
-                    autoComplete="new-password"
-                    required
-                    className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm"
-                    placeholder="Repita la contraseña"
-                  />
-                  {/* El botón de ocultar/mostrar se aplica a ambos campos */}
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                    {/* El botón está en el campo superior, aquí solo dejamos espacio si es necesario */}
-                  </div>
+                <input
+                  type={showPassword ? "text" : "password"} // Controlado por el estado
+                  id="confirm-password"
+                  name="confirmPassword"
+                  autoComplete="new-password"
+                  required
+                  className="mt-1 block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary sm:text-sm"
+                  placeholder="Repita la contraseña"
+                />
+                {/* El botón de ocultar/mostrar se aplica a ambos campos */}
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                  {/* El botón está en el campo superior, aquí solo dejamos espacio si es necesario */}
+                </div>
               </div>
             </div>
-            
           </div>
           <div className="mt-8">
             <button
@@ -213,7 +250,7 @@ const RegisterPage: React.FC<ViewProps> = ({ setView }) => {
             </button>
           </div>
         </form>
-        
+
         <p className="mt-6 text-center text-sm text-gray-600">
           ¿Ya tienes una cuenta?{" "}
           <button
